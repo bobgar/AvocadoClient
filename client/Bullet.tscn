@@ -1,0 +1,23 @@
+[gd_scene format=2]
+
+[node name="Bullet" type="Node2D" index="0"]
+
+[node name="Polygon2D" type="Polygon2D" parent="." index="0"]
+scale = Vector2( 0.87077, 0.807902 )
+polygon = PoolVector2Array( -7, -7, 0, -10, 7, -7, 10, 0, 7, 7, 0, 10, -7, 7, -10, 0 )
+uv = PoolVector2Array(  )
+splits = PoolIntArray(  )
+color = Color( 1, 1, 1, 1 )
+vertex_colors = PoolColorArray(  )
+offset = Vector2( 0, 0 )
+antialiased = false
+texture = null
+texture_offset = Vector2( 0, 0 )
+texture_scale = Vector2( 1, 1 )
+texture_rotation_degrees = 0.0
+skeleton = NodePath("")
+invert_enable = false
+invert_border = 100.0
+bones = [  ]
+_sections_unfolded = [ "Transform", "polygon" ]
+
