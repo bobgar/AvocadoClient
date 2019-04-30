@@ -6,6 +6,6 @@ func encode_data(data, mode):
 func decode_data(data, is_string):
 	return data.get_string_from_utf8() if is_string else bytes2var(data)
 
-func _log(node, msg):
+func _log(msg):
 	print(msg)
-	node.add_text(str(msg) + "\n")
+	#node.add_text(str(msg) + "\n")

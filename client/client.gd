@@ -1,15 +1,25 @@
 extends Node
 
 const GamestateProto = preload("res://gamestate.gd")
-onready var Ship = preload("res://client/Ship.tscn")
+onready var Ship = preload("res://client/ships/Forward.tscn")
 onready var Bullet = preload("res://client/Bullet.tscn")
+
+onready var Login = preload("res://Login/Login.tscn");
+onready var JoinRoom = preload("res://JoinRoom/JoinRoom.tscn");
+#onready var chooseShip = preload("res://ChooseShip/ChooseShip.tscn");
+
+enum CLIENT_STATE{
+  LOGIN,
+  JOIN_ROOM,
+  CHOOSE_SHIP,
+  IN_GAME
+}
+
 
 export(PoolColorArray) var colors = PoolColorArray()
 
 var _ships = {}
 var _bullets = {}
-
-onready var _log_dest = get_parent().get_node("Panel/VBoxContainer/RichTextLabel")
 
 var _client = WebSocketClient.new()
 var _write_mode = WebSocketPeer.WRITE_MODE_BINARY
@@ -17,6 +27,9 @@ var _use_multiplayer = false
 var last_connected_client = 0
 var _isConnected = false
 var _deltaAccumulate = 0
+var _curState = CLIENT_STATE.LOGIN;
+
+var _loginScreen
 
 func _init():
 	_client.connect("connection_established", self, "_client_connected")
@@ -32,18 +45,24 @@ func _init():
 	#Dev
 	#connect_to_url("ws://localhost:8000/ws", [])
 	#Bobgar.com
-	connect_to_url("ws://bobgar.com:8000/ws", [])
+	connect_to_url("ws://127.0.0.1:8000/ws", [])
+	
+func _ready():
+	Utils._log("READY CALLED")
+	_showLogin();
 
 func _peer_connected(id):
-	Utils._log(_log_dest, "%s: Client just connected" % id)
+	Utils._log("%s: Client just connected" % id)
 	last_connected_client = id
 
 func _exit_tree():
 	_client.disconnect_from_host()
 
 func _process(delta):
-	if _client.get_connection_status() == WebSocketClient.CONNECTION_DISCONNECTED:
+	#For now its good enough to return if not yet in the game state.
+	if _curState != CLIENT_STATE.IN_GAME or _client.get_connection_status() == WebSocketClient.CONNECTION_DISCONNECTED:
 		return
+		
 	_client.poll()
 	_deltaAccumulate += delta
 	if _deltaAccumulate > .05:
@@ -52,15 +71,12 @@ func _process(delta):
 		var shipUpdate = GamestateProto.ShipUpdate.new()
 		var sendUserUpdate = false;
 		if Input.is_action_pressed("up"):
-			Utils._log(_log_dest, "UP")
 			shipUpdate.set_thrust(true)
 			sendUserUpdate = true;
 		if Input.is_action_pressed("left"):
-			Utils._log(_log_dest, "LEFT")
 			shipUpdate.set_rotLeft(true)
 			sendUserUpdate = true;
 		if Input.is_action_pressed("right"):
-			Utils._log(_log_dest, "RIGHT")
 			shipUpdate.set_rotRight(true)
 			sendUserUpdate = true;
 		if Input.is_action_pressed("fire"):
@@ -77,7 +93,6 @@ func _encodeAndSend(update):
 	message.set_data(b)
 	var messageBytes = message.to_bytes()
 	
-	Utils._log(_log_dest, "SENDING DATA: %s" % messageBytes)
 	send_data(messageBytes)
 	
 	
@@ -86,12 +101,17 @@ func send_data(data):
 	_client.get_peer(1).put_packet(Utils.encode_data(data, _write_mode))
 
 func _client_connected(protocol):
-	Utils._log(_log_dest, "Client just connected with protocol: %s" % protocol)
+	Utils._log("Client just connected with protocol: %s" % protocol)
 	_client.get_peer(1).set_write_mode(_write_mode)
 	_isConnected = true;
+	
+func _showLogin():
+	_loginScreen = Login.instance();
+	get_tree().get_root().call_deferred("add_child", _loginScreen);
+	#get_tree().get_root().add_child(_loginScreen);
 
 func _client_disconnected():
-	Utils._log(_log_dest, "Client just disconnected")
+	Utils._log("Client just disconnected")
 	_isConnected = false;
 
 func _client_received(p_id = 1):

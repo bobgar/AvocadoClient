@@ -1,0 +1,41 @@
+[gd_scene format=2]
+
+[node name="Root" type="Node2D" index="0"]
+_sections_unfolded = [ "Transform" ]
+
+[node name="Polygon2D" type="Polygon2D" parent="." index="0"]
+position = Vector2( -636.762, -222.016 )
+scale = Vector2( 1, 1.00434 )
+polygon = PoolVector2Array( 636.762, 191.186, 606.762, 240.97, 666.762, 240.97 )
+uv = PoolVector2Array(  )
+splits = PoolIntArray(  )
+color = Color( 1, 1, 1, 1 )
+vertex_colors = PoolColorArray(  )
+offset = Vector2( 0, 0 )
+antialiased = false
+texture = null
+texture_offset = Vector2( 0, 0 )
+texture_scale = Vector2( 1, 1 )
+texture_rotation_degrees = 0.0
+skeleton = NodePath("")
+invert_enable = false
+invert_border = 100.0
+bones = [  ]
+
+[node name="Polygon2D2" type="Polygon2D" parent="." index="1"]
+polygon = PoolVector2Array( 0, -30, 10, -10, -10, -10 )
+uv = PoolVector2Array(  )
+splits = PoolIntArray(  )
+color = Color( 0, 0, 0, 1 )
+vertex_colors = PoolColorArray(  )
+offset = Vector2( 0, 0 )
+antialiased = false
+texture = null
+texture_offset = Vector2( 0, 0 )
+texture_scale = Vector2( 1, 1 )
+texture_rotation_degrees = 0.0
+skeleton = NodePath("")
+invert_enable = false
+invert_border = 100.0
+bones = [  ]
+
